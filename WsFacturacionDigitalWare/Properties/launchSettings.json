@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/productos",
+      "launchUrl": "api/facturas",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -20,7 +20,7 @@
     "WsFacturacionDigitalWare": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/productos",
+      "launchUrl": "api/facturas",
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

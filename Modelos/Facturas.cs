@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Modelos
 {
@@ -14,5 +15,7 @@ namespace Modelos
         public DateTime Fecha { get; set; }
 
         public long IdCliente { get; set; }
+
+        public List<FacturasDetalle> DetalleFactura { get; set; }
     }
 }
