@@ -8,5 +8,10 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Modelos\Modelos.csproj" />
+    <ProjectReference Include="..\Servicios\Servicios.csproj" />
+  </ItemGroup>
+
 
 </Project>

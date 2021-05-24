@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Servicios
 {
-    public class ProductosRepository : IProductosRepository
+    public class FacturasRepository : IFacturasRepository
     {
         private readonly string _connectionString;
 
@@ -15,29 +15,29 @@ namespace Servicios
         /// Constructor para inicializar la cadena de Conexion
         /// </summary>
         /// <param name="configuration"></param>
-        public ProductosRepository(IConfiguration configuration)
+        public FacturasRepository(IConfiguration configuration)
         {            
             _connectionString = configuration.GetConnectionString("FacturacionConnection");
         }
         /// <summary>
-        /// Lista de todos productos Habilitados
+        /// Lista de todos facturas Habilitados
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Productos>> GetAll()
+        public async Task<List<Facturas>> GetAll()
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("GetAllProductos", sql))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    var response = new List<Productos>();
+                    var response = new List<Facturas>();
                     await sql.OpenAsync();
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
                         {
-                            response.Add(MapToProductos(reader));
+                            response.Add(MapToFacturas(reader));
                         }
                     }
 
@@ -45,23 +45,26 @@ namespace Servicios
                 }
             }
         }
-        private Productos MapToProductos(SqlDataReader reader)
+        private Facturas MapToFacturas(SqlDataReader reader)
         {
-            return new Productos()
+            return new Facturas()
             {
-                IdCategoria = (short)reader["IdCategoria"],
-                NombreProducto = reader["NombreProducto"].ToString(),
-                Existencias = (decimal)reader["Existencias"],
+                NumeroFactura = (decimal)reader["NumeroFactura"],
+                PrefijoFactura = reader["PrefijoFactura"].ToString(),
+                Estado = reader["Estado"].ToString(),
                 Valor = (decimal)reader["Valor"],
+                ValorIva = (decimal)reader["ValorIva"],
+                Fecha = Convert.ToDateTime(reader["Fecha"]),
+                IdCliente = (long)reader["IdCliente"],
             };
         }
 
         /// <summary>
-        /// Consultar Producto por Id
+        /// Consultar factura por Id
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
-        public async Task<Productos> GetById(int Id)
+        public async Task<Facturas> GetById(int Id)
         {
             using (SqlConnection sql = new SqlConnection(_connectionString))
             {
@@ -69,14 +72,14 @@ namespace Servicios
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@Id", Id));
-                    Productos response = null;
+                    Facturas response = null;
                     await sql.OpenAsync();
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
                         {
-                            response = MapToProductos(reader);
+                            response = MapToFacturas(reader);
                         }
                     }
 
@@ -86,11 +89,11 @@ namespace Servicios
         }
 
         /// <summary>
-        /// Insertar nuevo productos
+        /// Insertar nueva factura
         /// </summary>
         /// <param name="producto"></param>
         /// <returns></returns>
-        public async Task <bool> Insert(Productos producto)
+        public async Task <bool> Insert(Facturas factura)
         {
             try
             {
@@ -99,11 +102,13 @@ namespace Servicios
                     using (SqlCommand cmd = new SqlCommand("CrearProducto", sql))
                     {
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                        cmd.Parameters.Add(new SqlParameter("@NombreProducto", producto.NombreProducto));
-                        cmd.Parameters.Add(new SqlParameter("@Existencias", producto.Existencias));
-                        cmd.Parameters.Add(new SqlParameter("@Valor", producto.Valor));
-                        cmd.Parameters.Add(new SqlParameter("@ValorIva", producto.ValorIva));
-                        cmd.Parameters.Add(new SqlParameter("@IdCategoria", producto.IdCategoria));
+                        cmd.Parameters.Add(new SqlParameter("@NumeroFactura", factura.NumeroFactura));
+                        cmd.Parameters.Add(new SqlParameter("@PrefijoFactura", factura.PrefijoFactura));
+                        cmd.Parameters.Add(new SqlParameter("@Estado", factura.Estado));
+                        cmd.Parameters.Add(new SqlParameter("@Valor", factura.Valor));
+                        cmd.Parameters.Add(new SqlParameter("@ValorIva", factura.ValorIva));
+                        cmd.Parameters.Add(new SqlParameter("@Fecha", factura.Fecha));
+                        cmd.Parameters.Add(new SqlParameter("@IdCliente", factura.IdCliente));
                         await sql.OpenAsync();
                         await cmd.ExecuteNonQueryAsync();
                         return true;
@@ -116,7 +121,7 @@ namespace Servicios
             }
         }
         /// <summary>
-        /// Borrar un producto por el Id
+        /// Borrar una factura por el Id
         /// </summary>
         /// <param name="Id">Identificador del producto</param>
         /// <returns></returns>
@@ -142,12 +147,12 @@ namespace Servicios
             }
         }
         /// <summary>
-        /// Modificar producto por Id
+        /// Modificar facturas por Id
         /// </summary>
-        /// <param name="producto"></param>
+        /// <param name="factura"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<bool> Update(Productos producto, int id)
+        public async Task<bool> Update(Facturas factura, int id)
         {
             try
             {
@@ -156,13 +161,14 @@ namespace Servicios
                     using (SqlCommand cmd = new SqlCommand("ModificarProductoById", sql))
                     {
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                        cmd.Parameters.Add(new SqlParameter("@Id", id));
-                        cmd.Parameters.Add(new SqlParameter("@NombreProducto", producto.NombreProducto));
-                        cmd.Parameters.Add(new SqlParameter("@Existencias", producto.Existencias));
-                        cmd.Parameters.Add(new SqlParameter("@Valor", producto.Valor));
-                        cmd.Parameters.Add(new SqlParameter("@ValorIva", producto.ValorIva));
-                        cmd.Parameters.Add(new SqlParameter("@IdCategoria", producto.IdCategoria));
-                        cmd.Parameters.Add(new SqlParameter("@Habilitado", producto.Habilitado));
+                        cmd.Parameters.Add(new SqlParameter("@Id", id));                        
+                        cmd.Parameters.Add(new SqlParameter("@NumeroFactura", factura.NumeroFactura));
+                        cmd.Parameters.Add(new SqlParameter("@PrefijoFactura", factura.PrefijoFactura));
+                        cmd.Parameters.Add(new SqlParameter("@Estado", factura.Estado));
+                        cmd.Parameters.Add(new SqlParameter("@Valor", factura.Valor));
+                        cmd.Parameters.Add(new SqlParameter("@ValorIva", factura.ValorIva));
+                        cmd.Parameters.Add(new SqlParameter("@Fecha", factura.Fecha));
+                        cmd.Parameters.Add(new SqlParameter("@IdCliente", factura.IdCliente));
                         await sql.OpenAsync();
                         await cmd.ExecuteNonQueryAsync();
                         return true;

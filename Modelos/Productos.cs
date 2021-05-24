@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Modelos
+﻿namespace Modelos
 {
-    class Productos
+    public class Productos
     {
         /// <summary>
         /// Nombre del Producto
@@ -13,22 +9,22 @@ namespace Modelos
         /// <summary>
         /// Existencias de Inventario del producto
         /// </summary>
-        public int Existencias { get; set; }
+        public decimal Existencias { get; set; }
         /// <summary>
         /// Valor total del producto
         /// </summary>
-        public int Valor { get; set; }
+        public decimal Valor { get; set; }
         /// <summary>
         /// Valor de Iva del producto
         /// </summary>
-        public int ValorIva { get; set; }
-        /// <summary>
-        /// Producto Habilidado
-        /// </summary>
-        public bool Habilitado { get; set; }
+        public int ValorIva { get; set; }        
         /// <summary>
         /// Categoria del producto
         /// </summary>
-        public int IdCategoria { get; set; }
+        public short IdCategoria { get; set; }
+        /// <summary>
+        /// Indica si el producto esta habilitado
+        /// </summary>
+        public bool Habilitado { get; set; }
     }
 }
