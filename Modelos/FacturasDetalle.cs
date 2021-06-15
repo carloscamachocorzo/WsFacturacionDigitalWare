@@ -1,5 +1,8 @@
 ﻿namespace Modelos
 {
+    /// <summary>
+    /// Modelo de facturas detalle
+    /// </summary>
     public class FacturasDetalle
     {
         public long IdProducto { get; set; }
